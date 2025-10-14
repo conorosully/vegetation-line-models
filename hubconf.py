@@ -1,6 +1,7 @@
 dependencies = ['torch', 'torchvision', 'huggingface_hub']
 import network
 import torch
+import os
 
 def get_model(state_dict,guidance=True):
 
@@ -15,9 +16,13 @@ def get_model(state_dict,guidance=True):
                     in_channels=in_channels,
                     out_channels=1)
 
+    # Build the full path to the weights in the repo folder
+    repo_dir = os.path.dirname(__file__)
+    weights_path = os.path.join(repo_dir, state_dict)
+
     # Load weights
-    state_dict = torch.load(state_dict, map_location=torch.device('cpu') )
-    model.load_state_dict(state_dict)
+    state_dict_loaded = torch.load(weights_path, map_location='cpu')
+    model.load_state_dict(state_dict_loaded)
     model.eval()
 
     return model
