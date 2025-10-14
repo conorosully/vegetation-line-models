@@ -1,14 +1,23 @@
 dependencies = ['torch', 'torchvision', 'huggingface_hub']
-from src.model import HEDModel
+import network
+import torch
 
-def hed_simplecnn(pretrained=True):
-    model = HEDModel("simplecnn")
-    if pretrained:
-        model = HEDModel.from_pretrained("conorosully/HED-Coastline-Detection", version="simplecnn")
-    return model
+def get_model(state_dict,guidance=True):
 
-def hed_bigearthnet(pretrained=True):
-    model = HEDModel("bigearthnet")
-    if pretrained:
-        model = HEDModel.from_pretrained("conorosully/HED-Coastline-Detection", version="bigearthnet")
+    if guidance == True:
+        in_channels = 5  # 4 input channels + 1 guidance channel
+    else:
+        in_channels = 4
+
+    # Load model arcitecture
+    backbone = network.SimpleCNNBackbone(in_channels=in_channels)
+    model = network.HED(backbone=backbone, 
+                    in_channels=in_channels,
+                    out_channels=1)
+
+    # Load weights
+    state_dict = torch.load(state_dict, map_location=torch.device('cpu') )
+    model.load_state_dict(state_dict)
+    model.eval()
+
     return model
