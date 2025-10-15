@@ -25,4 +25,14 @@ def get_model(state_dict,guidance=True):
     model.load_state_dict(state_dict_loaded)
     model.eval()
 
-    return model
+    meta_data = {
+        'name': "SIVE_SimpleCNN",
+        'date': "04/JUNE/2024",
+        'arcitecture': "HED",
+        'backbone': "SimpleCNN",
+        'freeze_backbone': False,
+        'guidance': True,
+        'loss_function': "wBCE"
+    }
+
+    return model, meta_data
